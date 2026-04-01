@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import Habit.Habit;
 
 public final class HabitTracker {
-    // HabitTracker manages a LIST of habits — a single 'habit' field makes no sense 
+    // HabitTracker manages a LIST of habits — a single 'habit' field makes no sense
     private static int counter = 1;
     private ArrayList<Habit> habits = new ArrayList<>();
 
@@ -57,14 +57,19 @@ public final class HabitTracker {
     // Also uses getStreakHistory() getter instead of accessing private field
     // directly.
     public void markasDone(Habit habit, LocalDate date) {
-        habit.getStreakHistory().put(date, true);
-        System.out.println("Streak Updated.");
+        if (habit.getStreakHistory().get(date) == null || habit.getStreakHistory().get(date) == false) {
+            habit.getStreakHistory().put(date, true);
+            System.out.println("Streak Updated.");
+        } else
+            System.out.println("Streak Already Updated.");
     }
 
     // FIX 3: 'checkifDone' now takes a Habit parameter for the same reason.
-    public Boolean checkifDone(Habit habit, LocalDate date) {
-        return habit.getStreakHistory().getOrDefault(date, false);
-    }
+    /*
+     * public Boolean checkifDone(Habit habit, LocalDate date) {
+     * return habit.getStreakHistory().getOrDefault(date, false);
+     * }
+     */
 
     // FIX 3 + 4: Takes a Habit parameter, and uses getStreakHistory() / getTarget()
     // getters

@@ -2,16 +2,35 @@ package HabitMethods;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
-
+import src.HabitStorage;
 import Habit.Habit;
 
 public final class HabitTracker {
     // HabitTracker manages a LIST of habits — a single 'habit' field makes no sense
     private static int counter = 1;
-    private ArrayList<Habit> habits = new ArrayList<>();
+    private ArrayList<Habit> habits;
+
+    public HabitTracker() {
+        this.habits = HabitStorage.loadData();
+
+        if (!habits.isEmpty()) {
+            counter = habits.stream()
+                    .mapToInt(Habit::getHabitId)
+                    .max()
+                    .getAsInt() + 1;
+            // int maxId=0;
+            // for (Habit habit : habits) {
+            // if (habit.getHabitId()>maxId) {
+            // maxId=habit.getHabitId();
+            // }
+            // }
+            // counter=maxId+1;
+        }
+    }
 
     public void addHabit(String habitName, String habitDescription, String frequency, int target) {
         habits.add(new Habit(counter++, habitName, habitDescription, frequency, target));
+        HabitStorage.saveData(habits);
         System.out.println("Habit added successfully.");
     }
 
@@ -19,6 +38,7 @@ public final class HabitTracker {
         boolean removed = habits.removeIf(habit -> habit.getHabitId() == inputHabitId);
         if (removed) {
             System.out.println("Habit removed successfully.");
+            HabitStorage.saveData(habits);
         } else {
             System.out.println("Habit with ID " + inputHabitId + " was not found.");
         }
@@ -37,6 +57,7 @@ public final class HabitTracker {
 
     public void removeallHabits() {
         habits.clear();
+        HabitStorage.saveData(habits);
         System.out.println("All habits cleared.");
     }
 
@@ -59,12 +80,13 @@ public final class HabitTracker {
     public void markasDone(Habit habit, LocalDate date) {
         if (habit.getStreakHistory().get(date) == null || habit.getStreakHistory().get(date) == false) {
             habit.getStreakHistory().put(date, true);
+            HabitStorage.saveData(habits);
             System.out.println("Streak Updated.");
         } else
             System.out.println("Streak Already Updated.");
     }
 
-    // FIX 3: 'checkifDone' now takes a Habit parameter for the same reason.
+    // FIX 3: 'checkifDone' takes a Habit parameter for the same reason.
     /*
      * public Boolean checkifDone(Habit habit, LocalDate date) {
      * return habit.getStreakHistory().getOrDefault(date, false);

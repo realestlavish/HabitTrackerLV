@@ -1,14 +1,13 @@
-package src;
+package com.lavish.habittracker;
 
 import java.util.Scanner;
 import java.time.LocalDate;
-import HabitMethods.HabitTracker;
-import Habit.Habit;
+
 public class MainHabit {
     public static void main(String[] args) {
-        HabitTracker habitmethod = new HabitTracker();
+        HabitMethods habitmethod = new HabitMethods();
 
-        // FIX 8: Wrapped nextInt() calls in a helper to catch InputMismatchException
+        // Wrapped nextInt() calls in a helper to catch InputMismatchException
         // so the program no longer crashes when a user types a letter instead of a
         // number.
         try (Scanner inputHabit = new Scanner(System.in)) {
@@ -58,7 +57,7 @@ public class MainHabit {
                         habitmethod.removeallHabits();
                         break;
 
-                    // FIX 7: Case 5 — mark a habit as done for today
+                    //Case 5 — mark a habit as done for today
                     case 5:
                         System.out.println("Enter the Habit ID to mark as done today:");
                         int markId = readInt(inputHabit);
@@ -70,7 +69,7 @@ public class MainHabit {
                         }
                         break;
 
-                    // FIX 7: Case 6 — view the current streak for a habit
+                    //Case 6 — view the current streak for a habit
                     case 6:
                         System.out.println("Enter the Habit ID to view streak:");
                         int streakId = readInt(inputHabit);
@@ -99,7 +98,7 @@ public class MainHabit {
         }
     }
 
-    // FIX 8: Helper method to safely read an integer — shows an error and retries
+    // Helper method to safely read an integer — shows an error and retries
     // instead of crashing with InputMismatchException when the user types a letter.
     private static int readInt(Scanner scanner) {
         while (true) {

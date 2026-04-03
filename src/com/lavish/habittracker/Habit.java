@@ -1,4 +1,4 @@
-package Habit;
+package com.lavish.habittracker;
 
 import java.time.LocalDate;
 import java.util.HashMap;

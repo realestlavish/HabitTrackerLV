@@ -1,11 +1,9 @@
-package src;
+package com.lavish.habittracker;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
-
-import Habit.Habit;
 
 public class streakDisplay {
 

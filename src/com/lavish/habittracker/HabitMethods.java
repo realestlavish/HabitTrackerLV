@@ -1,16 +1,14 @@
-package HabitMethods;
+package com.lavish.habittracker;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
-import src.HabitStorage;
-import Habit.Habit;
 
-public final class HabitTracker {
-    // HabitTracker manages a LIST of habits — a single 'habit' field makes no sense
+public final class HabitMethods {
+    // HabitTracker manages a LIST of habits
     private static int counter = 1;
     private ArrayList<Habit> habits;
 
-    public HabitTracker() {
+    public HabitMethods() {
         this.habits = HabitStorage.loadData();
 
         if (!habits.isEmpty()) {
@@ -18,13 +16,6 @@ public final class HabitTracker {
                     .mapToInt(Habit::getHabitId)
                     .max()
                     .getAsInt() + 1;
-            // int maxId=0;
-            // for (Habit habit : habits) {
-            // if (habit.getHabitId()>maxId) {
-            // maxId=habit.getHabitId();
-            // }
-            // }
-            // counter=maxId+1;
         }
     }
 
@@ -61,10 +52,7 @@ public final class HabitTracker {
         System.out.println("All habits cleared.");
     }
 
-    // FIX 2: 'getStreak' now takes a Habit parameter instead of referencing
-    // 'frequency'
-    // which doesn't exist in HabitTracker — frequency belongs to the Habit class.
-    // We call habit.getFrequency() through the getter instead.
+    // 'getStreak' takes a Habit parameter
     public int getStreak(Habit habit) {
         if (habit.getFrequency().equals("daily")) {
             return dailystreakCalculator(habit);
@@ -73,7 +61,7 @@ public final class HabitTracker {
         }
     }
 
-    // FIX 3: 'markasDone' now takes a Habit parameter so we know WHICH habit to
+    // 'markasDone' takes a Habit parameter so we know WHICH habit to
     // mark.
     // Also uses getStreakHistory() getter instead of accessing private field
     // directly.
@@ -85,13 +73,6 @@ public final class HabitTracker {
         } else
             System.out.println("Streak Already Updated.");
     }
-
-    // FIX 3: 'checkifDone' takes a Habit parameter for the same reason.
-    /*
-     * public Boolean checkifDone(Habit habit, LocalDate date) {
-     * return habit.getStreakHistory().getOrDefault(date, false);
-     * }
-     */
 
     // FIX 3 + 4: Takes a Habit parameter, and uses getStreakHistory() / getTarget()
     // getters
@@ -111,8 +92,6 @@ public final class HabitTracker {
         return streak;
     }
 
-    // FIX 3 + 4: Same fixes — Habit parameter + using getters for streakHistory and
-    // target
     public int weekstreakCalculator(Habit habit) {
         boolean isCurrentWeek = true;
         int streak = 0;
@@ -130,8 +109,6 @@ public final class HabitTracker {
                 }
             }
 
-            // FIX 4: Changed 'habit.Target' → 'habit.getTarget()' (private field, must use
-            // getter)
             if (isCurrentWeek || count >= habit.getTarget()) {
                 if (!isCurrentWeek) {
                     streak++;

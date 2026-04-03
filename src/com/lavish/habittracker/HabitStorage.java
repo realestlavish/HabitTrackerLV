@@ -1,56 +1,74 @@
-package src;
+package com.lavish.habittracker;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File; 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import Habit.Habit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 public class HabitStorage {
-    private static final String FILE_PATH = "habits.Json";
+    private static final String FILE_PATH = "habits.json";
 
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    /*To Save the Data into the file */
+    /* To Save the Data into the file */
     public static void saveData(ArrayList<Habit> habits) {
-        ArrayList<HabitData> dataList = new ArrayList<>();
-        for (Habit habit : habits) {
-            dataList.add(toAddData(habit));
-        }
-
-        try (FileWriter writer = new FileWriter(FILE_PATH)) {
-            gson.toJson(dataList, writer);
-            System.out.println("Data Succesfully Saved !! ");
+        try {
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            ArrayList<HabitData> dataList = new ArrayList<>();
+            for (Habit habit : habits) {
+                dataList.add(toAddData(habit));
+            }
+            try (FileWriter writer = new FileWriter(file)) {
+                gson.toJson(dataList, writer);
+            }
         } catch (IOException e) {
-            System.out.println("Error Saving HabitData !!" + e.getMessage());
+            System.out.println("Error saving habits: " + e.getMessage());
         }
     }
 
-    /* To Load Data from File When Starting the Program */
     public static ArrayList<Habit> loadData() {
-        try (FileReader fReader = new FileReader(FILE_PATH)) {
-            // TypeToken tells Gson we want an ArrayList of HabitData specifically
+        File file = new File(FILE_PATH);
+
+        if (!file.exists()) {
+            System.out.println("No saved habits found. Starting fresh.");
+            return new ArrayList<>();
+        }
+
+        if (file.length() == 0) {
+            System.out.println("Save file is empty. Starting fresh.");
+            return new ArrayList<>();
+        }
+
+        try (FileReader fReader = new FileReader(file)) {
             java.lang.reflect.Type type = new TypeToken<ArrayList<HabitData>>() {
             }.getType();
             ArrayList<HabitData> dataList = gson.fromJson(fReader, type);
 
-            if (dataList == null)
+            if (dataList == null) {
+                System.out.println("Save file could not be read. Starting fresh.");
                 return new ArrayList<>();
+            }
 
             ArrayList<Habit> dataLoadedHabits = new ArrayList<>();
             for (HabitData habit : dataList) {
                 dataLoadedHabits.add(fromData(habit));
             }
             return dataLoadedHabits;
+
         } catch (IOException e) {
-            System.out.println("No Saved Habits Found. Have a fresh start" + e.getMessage());
+            System.out.println("No saved habits found. Starting fresh.");
             return new ArrayList<>();
         }
     }
@@ -62,7 +80,6 @@ public class HabitStorage {
         private String frequency; // daily weekly
         private int target; // only for weekly
         private Map<String, Boolean> streakHistory;
-        ArrayList<HabitData> dataList = new ArrayList<>();
     }
 
     /*

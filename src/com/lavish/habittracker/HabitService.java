@@ -3,12 +3,12 @@ package com.lavish.habittracker;
 import java.util.ArrayList;
 import java.time.LocalDate;
 
-public final class HabitMethods {
+public final class HabitService {
     // HabitTracker manages a LIST of habits
     private static int counter = 1;
     private ArrayList<Habit> habits;
 
-    public HabitMethods() {
+    public HabitService() {
         this.habits = HabitStorage.loadData();
 
         if (!habits.isEmpty()) {

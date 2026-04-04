@@ -3,13 +3,14 @@ package com.lavish.habittracker;
 import java.util.Scanner;
 import java.time.LocalDate;
 
-public class MainHabit {
-    public static void main(String[] args) {
-        HabitMethods habitmethod = new HabitMethods();
+public class HabitUI {
+    private HabitService habitService;
 
-        // Wrapped nextInt() calls in a helper to catch InputMismatchException
-        // so the program no longer crashes when a user types a letter instead of a
-        // number.
+    public HabitUI(HabitService habitService) {
+        this.habitService = habitService;
+    }
+
+    public void start() {
         try (Scanner inputHabit = new Scanner(System.in)) {
             while (true) {
                 System.out.println("\nChoose an action:");
@@ -17,7 +18,6 @@ public class MainHabit {
                 System.out.println("2. Remove Habit");
                 System.out.println("3. List Habits");
                 System.out.println("4. Clear List");
-                // FIX 7: Added menu options to actually USE the streak feature
                 System.out.println("5. Mark Habit as Done Today");
                 System.out.println("6. View Streak for a Habit");
                 System.out.println("7. Exit");
@@ -38,7 +38,7 @@ public class MainHabit {
                         System.out.println("Please enter the Habit Target (for weekly: how many days per week):");
                         int habitInputTarget = readInt(inputHabit);
 
-                        habitmethod.addHabit(habitInputString, habitInputDescString, habitInputFreqString,
+                        habitService.addHabit(habitInputString, habitInputDescString, habitInputFreqString,
                                 habitInputTarget);
                         break;
 
@@ -46,42 +46,41 @@ public class MainHabit {
                         System.out.println("Please input ID to be deleted:");
                         int delId = readInt(inputHabit);
                         inputHabit.nextLine();
-                        habitmethod.removeAHabit(delId);
+                        habitService.removeAHabit(delId);
                         break;
 
                     case 3:
-                        habitmethod.showallHabits();
+                        habitService.showallHabits();
                         break;
 
                     case 4:
-                        habitmethod.removeallHabits();
+                        habitService.removeallHabits();
                         break;
 
-                    //Case 5 — mark a habit as done for today
                     case 5:
                         System.out.println("Enter the Habit ID to mark as done today:");
                         int markId = readInt(inputHabit);
-                        Habit toMark = habitmethod.findHabitById(markId);
+                        Habit toMark = habitService.findHabitById(markId);
                         if (toMark != null) {
-                            habitmethod.markasDone(toMark, LocalDate.now());
+                            habitService.markasDone(toMark, LocalDate.now());
                         } else {
                             System.out.println("Habit with ID " + markId + " not found.");
                         }
                         break;
 
-                    //Case 6 — view the current streak for a habit
                     case 6:
                         System.out.println("Enter the Habit ID to view streak:");
                         int streakId = readInt(inputHabit);
                         System.out.println("Enter the month to view streak:");
-                        int streakMonth= readInt(inputHabit);
+                        int streakMonth = readInt(inputHabit);
                         System.out.println("Enter the year to view streak:");
-                        int streakYear= readInt(inputHabit);
-                        Habit toCheck = habitmethod.findHabitById(streakId);
+                        int streakYear = readInt(inputHabit);
+                        Habit toCheck = habitService.findHabitById(streakId);
                         if (toCheck != null) {
-                            int streak = habitmethod.getStreak(toCheck);
+                            int streak = habitService.getStreak(toCheck);
                             System.out.println("Current streak for '" + toCheck.getHabitName() + "': " + streak);
-                            streakDisplay.streakHistoryDisplay(habitmethod.findHabitById(streakId),streakMonth,streakYear);
+                            streakDisplay.streakHistoryDisplay(habitService.findHabitById(streakId), streakMonth,
+                                    streakYear);
                         } else {
                             System.out.println("Habit with ID " + streakId + " not found.");
                         }
@@ -98,8 +97,7 @@ public class MainHabit {
         }
     }
 
-    // Helper method to safely read an integer — shows an error and retries
-    // instead of crashing with InputMismatchException when the user types a letter.
+    // Helper method to safely read an integer
     private static int readInt(Scanner scanner) {
         while (true) {
             try {
